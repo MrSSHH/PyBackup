@@ -8,8 +8,8 @@
         {{ file_path }}
 
         <div class="float-right">
-            <button type="button" class="btn btn-sm btn-success">Download</button>
-            <button type="button" class="btn btn-sm btn-danger">Delete</button>
+            <a role="button" href="{{ url_for('download', download_file=file_path) }}" type="button" class="btn btn-sm btn-success">Download</a>
+            <a role="button" href="{{ url_for('delete', file_path=file_path) }}" type="button" class="btn btn-sm btn-danger">Delete</a>
         </div>
     </div>
     <div class="card-body">

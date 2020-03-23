@@ -60,12 +60,10 @@ def delete(file_path):
     return redirect('/explorer')
 
 
-@app.route("/upload")  # fix from upload to download
-def upload(download_file):
-    if download_file:
-        return send_from_directory(getcwd(), filename=download_file, as_attachment=True)
-    else:
-        return f"<p>{listdir(getcwd())}</p>"
+@app.route("/download/<download_file>")  # fix from upload to download
+def download(download_file):
+    print("aa")
+    return send_from_directory(getcwd(), filename=download_file, as_attachment=True)
 
 
 @app.route("/serverconsole", methods=["POST", "GET"])
@@ -90,7 +88,7 @@ def console():
 
                 elif "download" in command:
                     file = command.split(" ")[1]
-                    return upload(file)
+                    return download(file)
 
                 elif command in commands.keys():
                     data = commands[command]
