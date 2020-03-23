@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, send_from_directory
 from forms import LoginForm, ConsoleCommand
 from os import path, chdir, getcwd, listdir
 from shutil import rmtree
+from shutil import rmtree
 
 
 chdir(r"C:\Users\Ben-PC\Documents\Programming\Python\Projects\PyBackup\upload_cloud")
@@ -47,6 +48,16 @@ def explore():
 @app.route("/home")
 def home():
     return render_template('index.html')
+
+@app.route('/delete_folder/<file_path>')
+def delete_folder(file_path):
+    rmtree(file_path)
+    return redirect('/explorer')
+
+@app.route('/delete/<file_path>')
+def delete(file_path):
+    remove(file_path)
+    return redirect('/explorer')
 
 
 @app.route("/upload")  # fix from upload to download
