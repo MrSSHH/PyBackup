@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, send_from_directory, request, make_response
 from forms import LoginForm, ConsoleCommand
-from os import path, chdir, getcwd, listdir
+from os import path, chdir, getcwd, listdir, remove
 from shutil import rmtree
 from shutil import rmtree
 
