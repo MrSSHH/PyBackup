@@ -1,0 +1,24 @@
+{% extends 'layout_home.html' %}
+
+{% block content %}
+<table class="table table-hover animated fadeInUp">
+    <thead>
+        <tr class="lead">
+            <th>#</th>
+            <th>File</th>
+            <th>Path</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for num, file, path in files %}
+            <tr>
+                <td>{{ num }}</td>
+                <td><a title="Click to View" href="{{ url_for('view', filepath=path) }}">{{ file }}</a></td>
+                <td>{{ path }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock content %}

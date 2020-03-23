@@ -1,0 +1,20 @@
+{% extends 'layout_home.html' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        {{ file_name }}<br>
+        {{ file_path }}
+
+        <div class="float-right">
+            <button type="button" class="btn btn-sm btn-success">Download</button>
+            <button type="button" class="btn btn-sm btn-danger">Delete</button>
+        </div>
+    </div>
+    <div class="card-body">
+        {{ file_content }}
+    </div>
+</div>
+
+{% endblock content %}
