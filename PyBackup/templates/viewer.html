@@ -13,7 +13,9 @@
         </div>
     </div>
     <div class="card-body">
-        {{ file_content }}
+        {% for line in file_content %}
+            <p>{{ line }}</p>
+        {% endfor %}
     </div>
 </div>
 

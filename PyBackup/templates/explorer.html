@@ -13,9 +13,15 @@
         {% for num, file, path in files %}
             <tr>
                 <td>{{ num }}</td>
-                <td><a title="Click to View" href="{{ url_for('view', filepath=path) }}">{{ file }}</a></td>
-                <td>{{ path }}</td>
+                <td><a style="text-decoration: none ;" title="Click to View" class="text-primary lead" href="{{ url_for('view', filepath=path) }}"><img src="https://i.imgur.com/CldcWZf.png" width="22" height="22"> {{ file }}</a></td>
+                <td>{{ path }}<button type="button" class="btn btn-danger float-right">Delete</button></td>
             </tr>
+        {% endfor %}
+
+        {% for num, folder, path in folders %}
+            <td>{{ num }}</td>
+            <td><a title="Click to Enter" style="text-decoration: none ;" class="text-warning lead" href="{{ url_for('view', filepath=path) }}"><img src="https://i.imgur.com/m5hfiXB.png" width="22" height="22"> {{ folder }}</a></td>
+            <td>{{ path }} <button type="button" class="btn btn-danger float-right">Delete</button> </td>
         {% endfor %}
     </tbody>
 

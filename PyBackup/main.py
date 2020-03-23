@@ -4,7 +4,7 @@ from os import path, chdir, getcwd, listdir
 from shutil import rmtree
 
 
-chdir(r"C:\Users\Ben-PC\Documents\Programming\Python\Projects\Backup_Server_UI\upload_cloud")
+chdir(r"C:\Users\Ben-PC\Documents\Programming\Python\Projects\PyBackup\upload_cloud")
 
 app = Flask(__name__)
 
@@ -26,14 +26,22 @@ def login():
 @app.route('/viewer/<filepath>')
 def view(filepath):
     file_open = open(filepath, 'r')
-    file_content = file_open.read()
+    file_content = file_open.read().split('\n')
     file_open.close()
+
     return render_template('viewer.html', file_content=file_content, file_path=filepath, file_name=path.split(filepath)[1])
 
 @app.route('/explorer')
 def explore():
-    files = [[index, file, path.join(getcwd(), file)] for index, file in enumerate(listdir())]
-    return render_template('explorer.html', files=files)
+    files = []
+    folders = []
+    for index, file in enumerate(listdir()):
+        full_path = path.join(getcwd(), file)
+        if path.isfile(full_path):
+            files.append([index, file, full_path])
+        else:
+            folders.append([index, file, full_path])
+    return render_template('explorer.html', files=files, folders=folders)
 
 
 @app.route("/home")
@@ -41,7 +49,7 @@ def home():
     return render_template('index.html')
 
 
-@app.route("/upload")
+@app.route("/upload")  # fix from upload to download
 def upload(download_file):
     if download_file:
         return send_from_directory(getcwd(), filename=download_file, as_attachment=True)
