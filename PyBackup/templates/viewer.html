@@ -7,15 +7,14 @@
         {{ file_name }}<br>
         {{ file_path }}
 
-        <div class="float-right">
+        <div class="float-right btn-group">
             <a role="button" href="{{ url_for('download', download_file=file_path) }}" type="button" class="btn btn-sm btn-success">Download</a>
             <a role="button" href="{{ url_for('delete', file_path=file_path) }}" type="button" class="btn btn-sm btn-danger">Delete</a>
+            <a title="Click to go back" class="btn btn-primary btn-sm text-center text-white" href="{{ url_for('explore', dir='\\'.join(file_path.split('\\')[0:-1])) }}" role="button">Back</a>
         </div>
     </div>
     <div class="card-body">
-        {% for line in file_content %}
-            <p>{{ line }}</p>
-        {% endfor %}
+        {{ file_content|safe }}
     </div>
 </div>
 

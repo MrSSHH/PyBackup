@@ -2,11 +2,8 @@ from flask import Flask, render_template, redirect, url_for, send_from_directory
 from forms import LoginForm, ConsoleCommand
 from os import path, chdir, getcwd, listdir, remove
 from shutil import rmtree
-from shutil import rmtree
 
-
-chdir(r"C:\Users\Ben-PC\Documents\Programming\Python\Projects\PyBackup\upload_cloud")
-
+main_dir = path.join(getcwd(), 'upload_cloud')
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'af7e8e3e25d417f9a0635906dc0325be'
@@ -27,43 +24,48 @@ def login():
 @app.route('/viewer/<filepath>')
 def view(filepath):
     file_open = open(filepath, 'r')
-    file_content = file_open.read().split('\n')
+    file_content = file_open.read().replace('\n', '<br>')
     file_open.close()
 
     return render_template('viewer.html', file_content=file_content, file_path=filepath, file_name=path.split(filepath)[1])
 
-@app.route('/explorer')
-def explore():
+
+@app.route('/explorer', defaults={'dir': main_dir})
+@app.route('/explorer/<dir>')
+def explore(dir):
+    if not dir.startswith(main_dir):
+        return redirect(url_for('login'))
+
     files = []
     folders = []
-    for index, file in enumerate(listdir()):
-        full_path = path.join(getcwd(), file)
+
+    for index, file in enumerate(listdir(dir)):
+        full_path = path.join(dir, file)
         if path.isfile(full_path):
             files.append([index, file, full_path])
         else:
             folders.append([index, file, full_path])
-    return render_template('explorer.html', files=files, folders=folders)
+
+    return render_template('explorer.html', files=files, folders=folders, path_dir=dir, main_dir=main_dir)
 
 
 @app.route("/home")
 def home():
     return render_template('index.html')
 
-@app.route('/delete_folder/<file_path>')
-def delete_folder(file_path):
-    rmtree(file_path)
-    return redirect('/explorer')
-
 @app.route('/delete/<file_path>')
 def delete(file_path):
-    remove(file_path)
+    if path.isfile(file_path):
+        remove(file_path)
+    else:
+        rmtree(file_path)
     return redirect('/explorer')
 
 
-@app.route("/download/<download_file>")  # fix from upload to download
-def download(download_file):
-    print("aa")
-    return send_from_directory(getcwd(), filename=download_file, as_attachment=True)
+@app.route("/download/<path><filename>")  # fix from upload to download
+def download(path, filename):
+
+    return send_from_directory(getcwd(), filename=filename, as_attachment=True)
 
 
 @app.route("/serverconsole", methods=["POST", "GET"])
