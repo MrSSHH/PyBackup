@@ -7,45 +7,45 @@
             <th>#</th>
             <th>File</th>
             <th>Path</th>
+            <th>Size</th>
+            <th>Action</th>
         </tr>
     </thead>
-    <p class="text-center lead">{{ path_dir }}</p>
+    <p class="text-center lead">upload_cloud{{ path_dir.split("upload_cloud")[1] }}</p>
     <tbody>
-        {% for num, file, path in files %}
+
+        {% for num, file, file_path, size, size_type, type in files %}
             <tr>
                 <td>{{ num }}</td>
-                <td><a style="text-decoration: none ;" title="Click to View" class="text-primary" href="{{ url_for('view', filepath=path) }}"><img src="https://i.imgur.com/CldcWZf.png" width="22" height="22"> {{ file }}</a></td>
-                <td class="">{{ path }}
-                    <div class="btn-group float-right">
-                        <a href="{{ url_for('download', path=path, filename=file) }}" role="button" type="button" class="btn btn-sm btn-success float-right text-white">Download</a>
-                        <a href="{{ url_for('delete', file_path=path) }}" role="button" type="button" class="btn btn-sm btn-danger float-right text-white">Delete</a></td>
+
+                {% if type == 'f' %}
+                    <td><a style="text-decoration: none ;" title="Click to View" class="text-primary lead" href="{{ url_for('view', filepath=file_path) }}"><img src="https://i.imgur.com/CldcWZf.png" width="22" height="22">{{ file }}</a></td>
+                {% else %}
+                    <td><a title="Click to Enter" style="text-decoration: none ;" class="text-warning lead" href="{{ url_for('explore', dir=file_path) }}"><img src="https://i.imgur.com/m5hfiXB.png" width="22" height="22">{{ file }}</a></td>
+                {% endif %}
+
+                <!-- Current dir !-->
+                <td class="">upload_cloud{{ file_path.split("upload_cloud")[1] }}</td>
+                <td>{{ size }} {{ size_type }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('download', f_path=file_path) }}" role="button" type="button" class="btn btn-md btn-primary float-right text-white">Download</a>
+                        <a href="{{ url_for('delete', file_path=file_path) }}" role="button" type="button" class="btn btn-md btn-danger float-right text-white">Delete</a></td>
                     </div>
                 </td>
+
             </tr>
-        {% endfor %}
-            {% for num, folder, path in folders %}
-                <tr>
-                    <td>{{ num }}</td>
-                    <td><a title="Click to Enter" style="text-decoration: none ;" class="text-warning lead" href="{{ url_for('explore', dir=path) }}"><img src="https://i.imgur.com/m5hfiXB.png" width="22" height="22"> {{ folder }}</a></td>
-                    <td class="col-lg-12">{{ path }}
-                        <div class="btn-group float-right">
-                            <a href="{{ url_for('download', path=path, filename=file) }}" role="button" type="button" class="btn btn-sm btn-success float-right text-white">Download</a>
-                            <a href="{{ url_for('delete', file_path=path) }}" role="button" type="button" class="btn btn-sm btn-danger float-right text-white">Delete</a></td>
-                        </div>
-                    </td>
-                </tr>
         {% endfor %}
     </tbody>
 
 </table>
 
 <!-- Center Buttons !-->
-<div class="text-center">
-
+<div class="text-center animated fadeInDown">
     {% if path_dir.split('\\')[-1] != main_dir.split("\\")[-1] %}
-        <a title="Click to go back" class="btn btn-danger btn-md text-center text-white" href="{{ url_for('explore', dir='\\'.join(path_dir.split('\\')[0:-1])) }}" role="button">Back</a>
+        <a title="Click to go back" class="btn btn-success btn-md text-center text-white" href="{{ url_for('explore', dir='\\'.join(path_dir.split('\\')[0:-1])) }}" role="button">Back</a>
     {% else %}
-        <a class="btn btn-danger btn-md text-center text-white disabled">Back</a>
+        <a class="btn btn-success btn-md text-center text-white disabled">Back</a>
     {% endif %}
 </div>
 

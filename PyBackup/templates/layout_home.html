@@ -18,19 +18,24 @@
                 <img class="img-fluid" width="30" height="30" src="https://i.imgur.com/DLBPgBe.png">
                 <span class="lead">PyBackup</span>
             </a>
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav nav-pills">
                 <li class="nav-item">
-                    <a class="nav-link" href="/explorer">Explorer</a>
+                    {% if url == '/home'or url == '/status' or url == '/viewer'%}
+                        <a class="nav-link" href="/explorer">Explorer</a>
+                    {% else %}
+                        <a class="nav-link active" href="/explorer">Explorer</a>
+                    {% endif %}
                 </li>
 
                  <li class="nav-item">
-                    <a class="nav-link" href="/serverconsole">Console</a>
-                </li>
-
-                 <li class="nav-item">
-                    <a class="nav-link" href="/status">Status</a>
+                    <a class="nav-link" href="/status">System Info</a>
                  </li>
             </ul>
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a  role="button" class="nav-link btn btn-danger text-white rounded" href="url-for('login')">Logout</a>
+                </li>
+             </ul>
 
         </nav>
         {% block content %}{% endblock %}
