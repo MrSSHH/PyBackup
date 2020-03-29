@@ -1,0 +1,60 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Setup</title>
+</head>
+<body>
+<div class="container-fluid bg-warning h-100 d-flex justify-content-center">
+    <div class="jumbotron my-auto col-6 bg-warning text-center animated fadeInDown">
+
+    <h1 class="display-1 text-white">PyBackup</h1>
+    <h3 class="text-white">Backup your files in a simple way</h3>
+        <br>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group" id="state">
+                <p class="lead text-white">Please enter the path to the directory you would like to keep your files</p>
+                {{ form.main_dir(class="col-12 rounded form-control", placeholder="Enter your path here") }}<br><br>
+                <a role="button" class="btn btn-success text-white" onclick="show_1()">Next</a>
+            </div>
+            <div id="state1"></div><br>
+            <div id="state2"></div><br>
+
+            <div class="invalid-feedback">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <ul class="flashes">
+                                <li>{{ message}}</li>
+                            </ul>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+
+
+        </form>
+        <br>
+        <script>
+            function show_1(){
+                document.getElementById("state").style.display = "none"
+                document.getElementById("state1").innerHTML = '<div class="form-group animated bounceInRight"><h4 class="text-white">Create your account</h4><p class="lead text-white">Please enter a <span class="text-primary"><b>username</b></span></p>{{ form.username(class="col-12 form-control rounded", placeholder="Enter your username here") }}<br><br><a role="button" class="btn btn-success text-white" onclick="show_2()">Next</a>';
+
+            };
+            function show_2(){
+                document.getElementById("state1").style.display = "none"
+
+                document.getElementById("state2").innerHTML = '<div class="form-group animated bounceInRight"><p class="lead text-white">Create your account<br>Please enter a <span class="text-primary"><b>password</b></span></p>{{ form.password(class="col-12 form-control rounded", placeholder="Enter your password here") }}<br><br>{{ form.submit(class="btn btn-success") }}';
+
+            };
+        </script>
+
+    </div>
+</div>
+
+</body>
+
+
+</html>
