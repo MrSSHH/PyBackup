@@ -5,6 +5,8 @@ from os import path, listdir, remove, getcwd
 from shutil import rmtree
 from pybackup.models import Settings
 from passlib import hash
+from flask_login import login_user, login_required, logout_user, current_user
+
 
 @app.route('/setup', methods=['POST', 'GET'])
 def setup():
@@ -34,7 +36,7 @@ def setup():
                 db.create_all()
 
             main_dir = form.main_dir.data
-            username = hash.sha256_crypt.encrypt(form.username.data)
+            username = form.username.data
             password = hash.sha256_crypt.encrypt(form.password.data)
 
             setting = Settings(
@@ -52,17 +54,19 @@ def setup():
 
 @app.route("/", methods=["POST", "GET"])
 def login():
-    global username
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
     if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
         return redirect(url_for('setup'))
 
     form = LoginForm()
     if form.validate_on_submit():
-
-        if hash.sha256_crypt.verify(form.username.data, Settings.query.first().username) and \
-                hash.sha256_crypt.verify(form.password.data, Settings.query.first().password):
-            username = form.username.data
+        setting = Settings.query.first()
+        if form.username.data == setting.username and hash.sha256_crypt.verify(form.password.data, setting.password):
+            login_user(setting)
             return redirect(url_for("home"))
+
         else:
             return render_template(
                 "login.html",
@@ -73,13 +77,15 @@ def login():
     return render_template("login.html", title="Login", form=form, wrong='no')
 
 
-@app.route('/viewer/<filepath>')
-def view(filepath):
-    if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
-        return redirect(url_for('setup'))
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
-    if not request.referrer:
-        return redirect(url_for('login'))
+
+@app.route('/viewer/<filepath>')
+@login_required
+def view(filepath):
     url = request.path
     file_open = open(filepath, 'r')
     file_content = file_open.read().replace('\n', '<br>')
@@ -104,13 +110,8 @@ except BaseException as e:
 
 @default_exp
 @app.route('/explorer/<dir>')
+@login_required
 def explore(dir):
-    if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
-        return redirect(url_for('setup'))
-
-    if not request.referrer:
-        return redirect(url_for('login'))
-
     if not dir.startswith(Settings.query.first().main_dir):
         return redirect(f'explorer/<{Settings.query.first().main_dir}>')
 
@@ -152,36 +153,21 @@ def explore(dir):
 
 
 @app.route("/home")
+@login_required
 def home():
     url = request.path
-    if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
-        return redirect(url_for('setup'))
-
-    if not request.referrer:
-        return redirect(url_for('login'))
-
-    return render_template('index.html', url=url, username=username)
+    return render_template('index.html', url=url, username=Settings.query.first().username)
 
 
 @app.route('/settings')
+@login_required
 def settings():
-    if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
-        return redirect(url_for('setup'))
-
-    if not request.referrer:
-        return redirect(url_for('login'))
-
     return render_template('settings.html')
 
 
 @app.route('/delete/<file_path>')
+@login_required
 def delete(file_path):
-    if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
-        return redirect(url_for('setup'))
-
-    if not request.referrer:
-        return redirect(url_for('login'))
-
     if path.isfile(file_path):
         remove(file_path)
     else:
@@ -190,13 +176,8 @@ def delete(file_path):
 
 
 @app.route("/download/<f_path>")
+@login_required
 def download(f_path):
-    if path.getsize(path.join(getcwd(), r"pybackup\site.db")) < 1:
-        return redirect(url_for('setup'))
-
-    if not request.referrer:
-        return redirect(url_for('login'))
-
     file_name = path.split(f_path)[1]
     file_ext, file_path = path.splitext(f_path)
     with open(f_path, 'r') as file:
