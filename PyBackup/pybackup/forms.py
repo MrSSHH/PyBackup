@@ -22,5 +22,6 @@ class SetupForm(FlaskForm):
                            validators=[DataRequired(),
                                        Length(min=2, max=20)])
 
-    password = PasswordField('password', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired(),
+                                                     Length(min=8, max=100)])
     submit = SubmitField('Finish')

@@ -11,42 +11,68 @@
     <h1 class="display-1 text-white">PyBackup</h1>
     <h3 class="text-white">Backup your files in a simple way</h3>
         <br>
+
+        <!-- Page 1 !-->
         <form action="" method="post">
             {{ form.hidden_tag() }}
-            <div class="form-group" id="state">
+            <div class="form-group" id="page-1">
                 <p class="lead text-white">Please enter the path to the directory you would like to keep your files</p>
                 {{ form.main_dir(class="col-12 rounded form-control", placeholder="Enter your path here") }}<br><br>
                 <a role="button" class="btn btn-success text-white" onclick="show_1()">Next</a>
             </div>
-            <div id="state1"></div><br>
-            <div id="state2"></div><br>
 
-            <div class="invalid-feedback">
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            <ul class="flashes">
-                                <li>{{ message}}</li>
-                            </ul>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
+            <!-- Page 2 !-->
+            <div id="page-2" style="display: none;">
+                <div class="form-group animated bounceInRight">
+                    <h4 class="text-white">Create your account</h4>
+                    <p class="lead text-white">Please enter a <span class="text-primary"><b>username</b></span></p>
+                    {{ form.username(class="col-12 form-control rounded", placeholder="Enter your username here") }}
+                    <br><br><a role="button" class="btn btn-success text-white" onclick="show_2()">Next</a>
+                </div>
+            </div>
+                <br>
+
+            <!-- Page 3 !-->
+            <div id="page-3" style="display: none;">
+                <div class="form-group animated bounceInRight">
+                    <h4 class="text-white">Create your account</h4>
+                    <p class="lead text-white">Please enter a <span class="text-primary"><b>password</b></span></p>
+                    {{ form.password(class="col-12 form-control rounded", placeholder="Enter your password here") }}<br><br>
+                    {{ form.submit(class="btn btn-success") }}
+                </div>
             </div>
 
+            <!-- Error Checking !-->
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <div class="alert alert-danger animated delay-5s bounceOutLeft">
+                            Password: {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
 
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger animated delay-5s bounceOutLeft">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
         </form>
         <br>
         <script>
             function show_1(){
-                document.getElementById("state").style.display = "none"
-                document.getElementById("state1").innerHTML = '<div class="form-group animated bounceInRight"><h4 class="text-white">Create your account</h4><p class="lead text-white">Please enter a <span class="text-primary"><b>username</b></span></p>{{ form.username(class="col-12 form-control rounded", placeholder="Enter your username here") }}<br><br><a role="button" class="btn btn-success text-white" onclick="show_2()">Next</a>';
+                document.getElementById("page-1").style.display = "none"
+                document.getElementById("page-2").style.display = "block";
 
             };
-            function show_2(){
-                document.getElementById("state1").style.display = "none"
 
-                document.getElementById("state2").innerHTML = '<div class="form-group animated bounceInRight"><p class="lead text-white">Create your account<br>Please enter a <span class="text-primary"><b>password</b></span></p>{{ form.password(class="col-12 form-control rounded", placeholder="Enter your password here") }}<br><br>{{ form.submit(class="btn btn-success") }}';
+            function show_2(){
+                document.getElementById("page-2").style.display = "none"
+                document.getElementById("page-3").style.display = "block";
 
             };
         </script>
