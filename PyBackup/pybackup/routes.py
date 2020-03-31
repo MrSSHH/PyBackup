@@ -6,6 +6,7 @@ from shutil import rmtree
 from pybackup.models import Settings
 from passlib import hash
 from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.utils import secure_filename
 
 
 @app.route('/setup', methods=['POST', 'GET'])
@@ -52,6 +53,7 @@ def setup():
     return render_template('setup.html', form=form)
 
 
+@app.route("/login", methods=["POST", "GET"])
 @app.route("/", methods=["POST", "GET"])
 def login():
     if current_user.is_authenticated:
@@ -99,6 +101,17 @@ def view(filepath):
         url=url)
 
 
+@app.route('/upload/<dst>', methods=["POST", "GET"])
+@login_required
+def upload(dst):
+    if request.method == "POST":
+        if request.files:
+            file = request.files["file"]
+            filename = secure_filename(file.filename)
+            file.save(path.join(dst, filename))
+            return redirect(url_for('explore', dir=dst))
+
+
 try:
     default_exp = app.route(
         '/explorer',
@@ -113,7 +126,7 @@ except BaseException as e:
 @login_required
 def explore(dir):
     if not dir.startswith(Settings.query.first().main_dir):
-        return redirect(f'explorer/<{Settings.query.first().main_dir}>')
+        return redirect(url_for('explore', dir=Settings.query.first().main_dir))
 
     url = request.path
 
@@ -172,7 +185,9 @@ def delete(file_path):
         remove(file_path)
     else:
         rmtree(file_path)
-    return redirect('/explorer')
+    details = path.split(file_path)
+    flash(f'"{details[1]}" Is removed from {details[0]}')
+    return redirect(url_for('explore', dir=details[0]))
 
 
 @app.route("/download/<f_path>")
